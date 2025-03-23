@@ -8,13 +8,20 @@ use Hanafalah\ModuleMedicalTreatment\{
 use Hanafalah\ModuleMedicService\Models\MedicService;
 
 return [
-    'contracts' => [
-        'medical_treatment'          => Contracts\MedicalTreatment::class,
-        'medical_service_treatment'  => Contracts\MedicalServiceTreatment::class,
-        'module_medical_treatment'   => Contracts\ModuleMedicalTreatment::class
+    'app' => [
+        'contracts' => [
+            //ADD YOUR CONTRACTS HERE
+            'medical_treatment'          => Contracts\MedicalTreatment::class,
+            'medical_service_treatment'  => Contracts\MedicalServiceTreatment::class,
+            'module_medical_treatment'   => Contracts\ModuleMedicalTreatment::class
+        ],
     ],
     'commands' => [
         ModuleMedicalTreatmentCommands\InstallMakeCommand::class
+    ],
+    'libs' => [
+        'model' => 'Models',
+        'contract' => 'Contracts'
     ],
     'database' => [
         'models' => [
