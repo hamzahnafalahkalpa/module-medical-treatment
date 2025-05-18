@@ -13,14 +13,6 @@ class MedicalServiceTreatment extends BaseModel
     protected $list = ['id', 'medical_treatment_id', 'medic_service_id'];
     protected $show = [];
 
-    // public function toViewApi(){
-    //     return new ViewMedicalServiceTreatment($this);
-    // }
-
-    // public function toShowApi(){
-    //     return new ViewMedicalTreatment($this);
-    // }
-
     //EIGER SECTION
     public function medicalTreatment()
     {

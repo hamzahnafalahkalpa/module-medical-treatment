@@ -32,14 +32,14 @@ class MedicalTreatment extends BaseModel
         });
     }
 
-    public function toViewApi()
+    public function getViewResource()
     {
-        return new ViewMedicalTreatment($this);
+        return ViewMedicalTreatment::class;
     }
 
-    public function toShowApi()
+    public function getShowResource()
     {
-        return new ViewMedicalTreatment($this);
+        return ViewMedicalTreatment::class;
     }
 
     //EIGER SECTION
