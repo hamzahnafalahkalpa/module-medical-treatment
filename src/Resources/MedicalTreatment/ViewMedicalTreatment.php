@@ -13,7 +13,7 @@ class ViewMedicalTreatment extends ApiResource
       'name'       => $this->name,
       'treatment_code' => $this->treatment_code ?? $this->medical_treatment_code,
       'treatment'      => $this->relationValidation('treatment', function () {
-        return $this->treatment->toViewApi();
+        return $this->treatment->toViewApi()->resolve();
       }),
       'service_label_id'   => $this->service_label_id,
       'service_label'      => isset($this->service_label) ? [
