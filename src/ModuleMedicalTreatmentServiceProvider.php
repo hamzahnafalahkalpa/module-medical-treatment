@@ -17,16 +17,7 @@ class ModuleMedicalTreatmentServiceProvider extends BaseServiceProvider
     {
         $this->registerMainClass(ModuleMedicalTreatment::class)
             ->registerCommandService(Providers\CommandServiceProvider::class)
-            ->registers([
-                '*',
-                'Services' => function () {
-                    $this->binds([
-                        Contracts\ModuleMedicalTreatment::class => new ModuleMedicalTreatment(),
-                        Contracts\MedicalTreatment::class => new Schemas\MedicalTreatment(),
-                        Contracts\MedicalServiceTreatment::class => Schemas\MedicalServiceTreatment::class
-                    ]);
-                }
-            ]);
+            ->registers(['*']);
     }
 
     /**
