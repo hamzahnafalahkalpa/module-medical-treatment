@@ -7,25 +7,10 @@ use Hanafalah\ModuleMedicalTreatment\Contracts;
 use Illuminate\Database\Eloquent\Model;
 use Hanafalah\LaravelSupport\Supports\PackageManagement;
 
-class MedicalServiceTreatment extends PackageManagement implements Contracts\MedicalServiceTreatment
+class MedicalServiceTreatment extends PackageManagement implements Contracts\Schemas\MedicalServiceTreatment
 {
-    protected array $__guard   = ['id', 'medical_treatment_id'];
-    protected array $__add     = ['medical_treatment_id', 'medic_service_id'];
     protected string $__entity = 'MedicalServiceTreatment';
     public static $medical_service_treatment_model;
-
-    public function showUsingRelation(): array
-    {
-        return [];
-    }
-
-    public function medicalServiceTreatment(mixed $conditionals = null): Builder
-    {
-        $this->booting();
-        return $this->MedicalServiceTreatment()
-            ->withParameters()
-            ->conditionals($conditionals);
-    }
 
     public function prepareStoreMedicalServiceTreatment(?array $attributes = null): Model
     {

@@ -6,9 +6,9 @@ use Hanafalah\ModuleService\Concerns\HasServiceItem;
 use Hanafalah\ModuleMedicalTreatment\Enums\MedicalTreatment\Status;
 use Hanafalah\ModuleMedicalTreatment\Resources\MedicalTreatment\ViewMedicalTreatment;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Hanafalah\LaravelSupport\Concerns\Support\HasEncoding;
 use Hanafalah\LaravelSupport\Models\BaseModel;
 use Hanafalah\LaravelHasProps\Concerns\HasProps;
+use Hanafalah\ModuleEncoding\Concerns\HasEncoding;
 use Hanafalah\ModuleTreatment\Concerns\HasTreatment;
 
 class MedicalTreatment extends BaseModel
@@ -32,19 +32,20 @@ class MedicalTreatment extends BaseModel
         });
     }
 
-    public function getViewResource()
-    {
-        return ViewMedicalTreatment::class;
+    public function getViewResource(){return ViewMedicalTreatment::class;}
+    public function getShowResource(){return ViewMedicalTreatment::class;}
+    public function viewUsingRelation():array{
+        return [];
     }
 
-    public function getShowResource()
-    {
-        return ViewMedicalTreatment::class;
+    public function showUsingRelation():array{
+        return [
+            'priceComponents.tariffComponent'
+        ];
     }
 
     //EIGER SECTION
-    public function medicServices()
-    {
+    public function medicServices(){
         return $this->belongsToManyModel(
             'MedicService',
             'MedicalServiceTreatment',
@@ -52,25 +53,10 @@ class MedicalTreatment extends BaseModel
             'medic_service_id'
         );
     }
-    public function serviceLabel()
-    {
-        return $this->belongsToModel('ServiceLabel');
-    }
-    public function medicalServiceTreatment()
-    {
-        return $this->hasOneModel('MedicalServiceTreatment');
-    }
-    public function medicalServiceTreatments()
-    {
-        return $this->hasManyModel('MedicalServiceTreatment');
-    }
-    public function priceComponent()
-    {
-        return $this->morphOneModel("PriceComponent", "model");
-    }
-    public function priceComponents()
-    {
-        return $this->morphManyModel("PriceComponent", "model");
-    }
+    public function serviceLabel(){return $this->belongsToModel('ServiceLabel');}
+    public function medicalServiceTreatment(){return $this->hasOneModel('MedicalServiceTreatment');}
+    public function medicalServiceTreatments(){return $this->hasManyModel('MedicalServiceTreatment');}
+    public function priceComponent(){return $this->morphOneModel("PriceComponent", "model");}
+    public function priceComponents(){return $this->morphManyModel("PriceComponent", "model");}
     //ENDEIGER SECTION
 }

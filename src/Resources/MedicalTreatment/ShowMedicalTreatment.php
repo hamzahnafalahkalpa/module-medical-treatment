@@ -15,8 +15,7 @@ class ShowMedicalTreatment extends ViewMedicalTreatment
   public function toArray($request): array
   {
     $arr = [];
-    $arr = array_merge($arr, parent::toArray($request));
-
+    $arr = $this->mergeArray(parent::toArray($request),$arr);
     return $arr;
   }
 }

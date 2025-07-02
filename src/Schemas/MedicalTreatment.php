@@ -2,109 +2,18 @@
 
 namespace Hanafalah\ModuleMedicalTreatment\Schemas;
 
-use Hanafalah\ModuleService\Contracts\ServicePrice;
-use Illuminate\Database\Eloquent\Builder;
 use Hanafalah\ModuleMedicalTreatment\Contracts;
-use Hanafalah\ModuleMedicalTreatment\Contracts\MedicalServiceTreatment;
-use Hanafalah\ModuleMedicalTreatment\Resources\MedicalTreatment\ShowMedicalTreatment;
-use Hanafalah\ModuleMedicalTreatment\Resources\MedicalTreatment\ViewMedicalTreatment;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Hanafalah\LaravelSupport\Supports\PackageManagement;
-use Hanafalah\ModuleTransaction\Contracts\PriceComponent;
+use Hanafalah\ModuleMedicalTreatment\Contracts\Data\MedicalTreatmentData;
 
-class MedicalTreatment extends PackageManagement implements Contracts\MedicalTreatment
+class MedicalTreatment extends PackageManagement implements Contracts\Schemas\MedicalTreatment
 {
-    protected array $__guard   = ['id'];
-    protected array $__add     = ['name'];
     protected string $__entity = 'MedicalTreatment';
     public static $medical_treatment_model;
     protected static $__service_label_model;
 
-    protected array $__resources = [
-        'view' => ViewMedicalTreatment::class,
-        'show' => ShowMedicalTreatment::class
-    ];
-
-    public function prepareViewMedicalTreatmentPaginate(int $perPage = 50, array $columns = ['*'], string $pageName = 'page', ?int $page = null, ?int $total = null): LengthAwarePaginator
-    {
-        $attributes ??= request()->all();
-        $paginate_options = compact('perPage', 'columns', 'pageName', 'page', 'total');
-        $model = $this->medicalTreatment()->paginate(...$this->arrayValues($paginate_options))
-            ->appends($attributes);
-        return static::$medical_treatment_model = $model;
-    }
-
-    public function viewMedicalTreatmentPaginate(int $perPage = 50, array $columns = ['*'], string $pageName = 'page', ?int $page = null, ?int $total = null): array
-    {
-        $paginate_options = compact('perPage', 'columns', 'pageName', 'page', 'total');
-        return $this->transforming($this->__resources['view'], function () use ($paginate_options) {
-            return $this->prepareViewMedicalTreatmentPaginate(...$this->arrayValues($paginate_options));
-        });
-    }
-
-    public function medicalTreatment(mixed $conditionals = null): Builder
-    {
-        $this->booting();
-        return $this->MedicalTreatmentModel()->withParameters('or')->conditionals($conditionals)
-            ->with(['medicServices', 'serviceLabel', 'treatment', 'priceComponents.tariffComponent'])
-            ->orderBy('name', 'asc');
-    }
-
-    public function showUsingRelation(): array
-    {
-        return [
-            'medicServices',
-            'priceComponents.tariffComponent',
-            'treatment'
-        ];
-    }
-
-
-    public function prepareShowMedicalTreatment(?Model $model = null, ?array $attributes = null): Model
-    {
-        $attributes ??= \request()->all();
-
-        $model ??= $this->getMedicalTreatment();
-        if (!isset($model)) {
-            $id = $attributes['id'] ?? null;
-            if (!isset($id)) throw new \Exception('id is required');
-
-            $model = $this->medicalTreatment()->with($this->showUsingRelation())->findOrFail($id);
-        } else {
-            $model->load($this->showUsingRelation());
-        }
-        return static::$medical_treatment_model = $model;
-    }
-
-    public function showMedicalTreatment(?Model $model = null): array
-    {
-        return $this->transforming($this->__resources['show'], function () use ($model) {
-            return $this->prepareShowMedicalTreatment($model);
-        });
-    }
-
-    public function prepareUpdateMedicalTreatmentStatus(?array $attributes = null): Model
-    {
-        $attributes ??= \request()->all();
-
-        if (!isset($attributes['id'])) throw new \Exception('id is required');
-
-        $model = $this->MedicalTreatmentModel()->findOrFail($attributes['id']);
-
-        $model->status = $attributes['status'];
-        $model->save();
-        return static::$medical_treatment_model = $model;
-    }
-
-    public function updateMedicalTreatmentStatus(): array
-    {
-        return $this->transaction(function () {
-            return $this->showMedicalTreatment($this->prepareUpdateMedicalTreatmentStatus());
-        });
-    }
-
-    public function prepareStoreMedicalTreatment(?array $attributes = null): Model
+    public function prepareStoreMedicalTreatment(MedicalTreatmentData $medical_treatment_dto): Model
     {
         $attributes ??= \request()->all();
         if (!isset($attributes['name'])) throw new \Exception('name is required');
@@ -195,48 +104,5 @@ class MedicalTreatment extends PackageManagement implements Contracts\MedicalTre
             'price'              => $treatment->price,
         ]);
         return static::$medical_treatment_model = $model;
-    }
-
-    public function storeMedicalTreatment(): array
-    {
-        return $this->transaction(function () {
-            return $this->showMedicalTreatment($this->prepareStoreMedicalTreatment());
-        });
-    }
-
-    public function prepareDeleteMedicalTreatment(?array $attributes = null): bool
-    {
-        $attributes ??= request()->all();
-        if (!isset($attributes['id'])) throw new \Exception('id is required');
-
-        return $this->MedicalTreatmentModel()->destroy($attributes['id']);
-    }
-
-    public function deleteMedicalTreatment(): bool
-    {
-        return $this->transaction(function () {
-            return $this->prepareDeleteMedicalTreatment();
-        });
-    }
-
-    public function getMedicalTreatment(): mixed
-    {
-        return static::$medical_treatment_model;
-    }
-
-
-    public function addOrChange(?array $attributes = []): self
-    {
-        $medical_treatment = $this->updateOrCreate($attributes);
-        static::$medical_treatment_model = $medical_treatment;
-        if (isset($attributes['price'])) {
-            $medical_treatment->load('treatment');
-            if (isset($medical_treatment->treatment)) {
-                $treatment = $medical_treatment->treatment;
-                $treatment->price = $attributes['price'];
-                $treatment->save();
-            }
-        }
-        return $this;
     }
 }
