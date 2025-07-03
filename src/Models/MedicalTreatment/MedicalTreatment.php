@@ -10,30 +10,48 @@ use Hanafalah\LaravelSupport\Models\BaseModel;
 use Hanafalah\LaravelHasProps\Concerns\HasProps;
 use Hanafalah\ModuleEncoding\Concerns\HasEncoding;
 use Hanafalah\ModuleTreatment\Concerns\HasTreatment;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
 class MedicalTreatment extends BaseModel
 {
-    use SoftDeletes, HasProps, HasServiceItem, HasTreatment, HasEncoding;
+    use HasUlids, SoftDeletes, HasProps, HasServiceItem, 
+        HasTreatment, HasEncoding;
 
-    protected $list = ['id', 'name', 'status', 'props'];
+    public $incrementing = false;
+    protected $keyType = 'string';
+    protected $primaryKey = 'id';
+    protected $list = ['id', 'name', 'service_label_id', 'status', 'props'];
     protected $show = [];
-    protected $table = 'medical_treatments';
 
     protected $casts = [
-        'name' => 'string'
+        'name' => 'string',
+        'treatment_code' => 'string'
     ];
+
+    public function getPropsQuery(): array
+    {
+        return [
+            'treatment_code' => 'props->prop_treatment->treatment_code'
+        ];
+    }
 
     protected static function booted(): void
     {
         parent::booted();
         static::creating(function ($query) {
-            if (!isset($query->medical_treatment_code)) $query->medical_treatment_code = static::hasEncoding('MEDICAL_TREATMENT');
-            if (!isset($query->status)) $query->status = Status::ACTIVE->value;
+            $query->medical_treatment_code ??= static::hasEncoding('MEDICAL_TREATMENT');
+            $query->status ??= self::getStatus('ACTIVE');
         });
     }
 
+    public static function getStatus(string $status){
+        return Status::from($status)->value;
+    }
+
+
     public function getViewResource(){return ViewMedicalTreatment::class;}
     public function getShowResource(){return ViewMedicalTreatment::class;}
+
     public function viewUsingRelation():array{
         return [];
     }

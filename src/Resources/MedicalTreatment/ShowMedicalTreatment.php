@@ -14,7 +14,11 @@ class ShowMedicalTreatment extends ViewMedicalTreatment
    */
   public function toArray($request): array
   {
-    $arr = [];
+    $arr = [
+      'service_label'     => $this->relationValidation('serviceLabel',function(){
+        return $this->serviceLabel->toShowApi()->resolve();
+      }, $this->prop_service_label),
+    ];
     $arr = $this->mergeArray(parent::toArray($request),$arr);
     return $arr;
   }

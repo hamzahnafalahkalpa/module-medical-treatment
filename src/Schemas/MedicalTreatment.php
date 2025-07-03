@@ -11,98 +11,47 @@ class MedicalTreatment extends PackageManagement implements Contracts\Schemas\Me
 {
     protected string $__entity = 'MedicalTreatment';
     public static $medical_treatment_model;
-    protected static $__service_label_model;
 
     public function prepareStoreMedicalTreatment(MedicalTreatmentData $medical_treatment_dto): Model
     {
-        $attributes ??= \request()->all();
-        if (!isset($attributes['name'])) throw new \Exception('name is required');
-
-        $model = $this->medicalTreatment()->updateOrCreate([
-            'id' => $attributes['id'] ?? null
-        ], [
-            'name' => $attributes['name'],
+        $model = $this->usingEntity()->updateOrCreate(['id' => $medical_treatment_dto->id ?? null], [
+            'name' => $medical_treatment_dto->name
         ]);
 
-        if (isset($attributes['medic_services']) && count($attributes['medic_services']) > 0) {
-            $medic_service_schema = $this->schemaContract('medical_service_treatment');
+        if (isset($medical_treatment_dto->medical_service_treatments) && count($medical_treatment_dto->medical_service_treatments) > 0) {
             $keep_service_treatment_ids = [];
-            foreach ($attributes['medic_services'] as $medic_service) {
-                $service = $this->ServiceModel()->findOrFail($medic_service['id']);
-                $medical_service_treatment = $medic_service_schema->prepareStoreMedicalServiceTreatment([
-                    'medical_treatment_id' => $model->getKey(),
-                    'medic_service_id'     => $service->reference_id,
-                    'name'                 => $service->name,
-                    'note'                 => $service->result
-                ]);
+            $medic_service_schema = $this->schemaContract('medical_service_treatment');
+            foreach ($medical_treatment_dto->medical_service_treatments as $dto) {
+                $medical_service_treatment    = $medic_service_schema->prepareStoreMedicalServiceTreatment($dto);
                 $keep_service_treatment_ids[] = $medical_service_treatment->getKey();
             }
-            $this->MedicalServiceTreatmentModel()
-                ->withoutGlobalScopes()
+            $this->MedicalServiceTreatmentModel()->withoutGlobalScopes()
                 ->where('medical_treatment_id', $model->getKey())
                 ->whereNotIn('id', $keep_service_treatment_ids)
                 ->forceDelete();
         } else {
-            throw new \Exception('medic_services is required');
+            throw new \Exception('medical_service_treatment is required');
         }
 
-        $treatment = $model->treatment;
+        $model->load('treatment');
+        $treatment_dto = &$medical_treatment_dto->treatment;
+        $treatment_dto->id = $model->treatment->getKey();
+        $treatment_dto->reference_type = $model->getMorphClass();
+        $treatment_dto->reference_id = $model->getKey();
 
-        if (isset($attributes['service_label_id'])) {
-            $service_label = $this->ServiceLabelModel()->findOrFail($attributes['service_label_id']);
-            static::$__service_label_model = $service_label;
-
-            $treatment = $model->treatment;
-            $treatment->service_label = [
-                'id'   => $attributes['service_label_id'],
-                'name' => $service_label->name,
-                'note' => $service_label->result
-            ];
-            $model->service_label = $treatment->service_label;
-            $model->service_label_id = $attributes['service_label_id'];
-        } else {
-            $treatment->service_label = null;
-            $model->service_label     = null;
-            $model->service_label_id  = null;
-        }
-
-        if (isset($attributes['tariff_components']) && count($attributes['tariff_components']) > 0) {
-            $price_schema = $this->schemaContract('price_component');
-            $attributes['model_id'] = $model->getKey();
-            $attributes['model_type'] = $model->getMorphClass();
-            $price_schema->prepareStorePriceComponent($attributes);
-
-            $treatment->price = $price_schema->getPrice();
-
-            $service_price_schema = app($this->__schema_contracts['service_price']);
-            $service_price_schema->prepareStoreServicePrice([
-                'service_id'         => $treatment->getKey(),
-                'service_item_id'    => $treatment->reference_id,
-                'service_item_type'  => $treatment->reference_type,
-                'price'              => $treatment->price,
-            ]);
-
-            if (isset($attributes['margin'])) {
-                $treatment->cogs = $treatment->price - $treatment->price * $attributes['margin'] / 100;
+        if (isset($medical_treatment_dto->service_prices) && count($medical_treatment_dto->service_prices) > 0) {
+            foreach ($medical_treatment_dto->service_prices as $service_price) {
+                $service_price->service_id     = $treatment_dto->id;
+                $service_price = $this->schemaContract('service_price')->prepareStorePriceComponent($service_price);
+                $treatment_dto->price = $service_price->price;
+                $treatment_dto->cogs  = $service_price->cogs;
             }
         }
-        if (isset($attributes['examination_stuff_id'])) {
-            $examStuff = $this->ExaminationStuffModel()->findOrFail($attributes['examination_stuff_id']);
 
-            $treatment->service_label_id   = $examStuff->getKey();
-            $treatment->service_label_name = $examStuff->name;
-            $treatment->service_label_flag = $examStuff->flag;
-        }
-        $treatment->save();
+        $this->schemaContract('treatment')->prepareStoreTreatment($treatment_dto);
+        $this->fillingProps($model,$medical_treatment_dto->props);
         $model->save();
 
-        $service_price_schema = $this->schemaContract('service_price');
-        $service_price_schema->prepareStoreServicePrice([
-            'service_id'         => $treatment->getKey(),
-            'service_item_id'    => $treatment->reference_id,
-            'service_item_type'  => $treatment->reference_type,
-            'price'              => $treatment->price,
-        ]);
         return static::$medical_treatment_model = $model;
     }
 }
