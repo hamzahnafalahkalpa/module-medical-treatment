@@ -740,7 +740,7 @@
             },
             "autoload": {
                 "files": [
-                    "helpers.php"
+                    "helper.php"
                 ],
                 "psr-4": {
                     "Illuminate\\Support\\": ""
@@ -1076,7 +1076,7 @@
             "autoload": {
                 "files": [
                     "functions.php",
-                    "helpers.php"
+                    "helper.php"
                 ],
                 "psr-4": {
                     "Illuminate\\Support\\": ""
@@ -2332,7 +2332,7 @@
             },
             "autoload": {
                 "files": [
-                    "src/helpers.php"
+                    "src/helper.php"
                 ],
                 "psr-4": {
                     "Hanafalah\\LaravelSupport\\": "src/"
