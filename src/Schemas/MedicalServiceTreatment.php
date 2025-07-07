@@ -12,6 +12,14 @@ class MedicalServiceTreatment extends PackageManagement implements Contracts\Sch
     protected string $__entity = 'MedicalServiceTreatment';
     public static $medical_service_treatment_model;
 
+    protected array $__cache = [
+        'index' => [
+            'name'     => 'medical_service_treatment',
+            'tags'     => ['medical_service_treatment', 'medical_service_treatment-index'],
+            'duration' => 24*60
+        ]
+    ];
+
     public function prepareStoreMedicalServiceTreatment(MedicalServiceTreatmentData $medical_service_treatment_dto): Model{        
         if (isset($medical_service_treatment_dto->id)) {
             $guard = ['id' => $medical_service_treatment_dto->id];

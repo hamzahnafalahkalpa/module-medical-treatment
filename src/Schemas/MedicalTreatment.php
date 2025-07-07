@@ -12,6 +12,14 @@ class MedicalTreatment extends PackageManagement implements Contracts\Schemas\Me
     protected string $__entity = 'MedicalTreatment';
     public static $medical_treatment_model;
 
+    protected array $__cache = [
+        'index' => [
+            'name'     => 'medical_treatment',
+            'tags'     => ['medical_treatment', 'medical_treatment-index'],
+            'duration' => 24*60
+        ]
+    ];
+    
     public function prepareStoreMedicalTreatment(MedicalTreatmentData $medical_treatment_dto): Model{
         $model = $this->usingEntity()->updateOrCreate(['id' => $medical_treatment_dto->id ?? null], [
             'name' => $medical_treatment_dto->name
@@ -38,7 +46,9 @@ class MedicalTreatment extends PackageManagement implements Contracts\Schemas\Me
         $treatment_dto->id             = $model->treatment->getKey();
         $treatment_dto->reference_type = $model->getMorphClass();
         $treatment_dto->reference_id   = $model->getKey();
-        $this->schemaContract('treatment')->prepareStoreTreatment($treatment_dto);
+        $treatment = $this->schemaContract('treatment')->prepareStoreTreatment($treatment_dto);
+
+        $medical_treatment_dto->props['prop_treatment'] = $treatment->toViewApi()->resolve();
         $this->fillingProps($model,$medical_treatment_dto->props);
         $model->save();
 
