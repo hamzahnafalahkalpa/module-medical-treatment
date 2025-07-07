@@ -2,30 +2,28 @@
 
 namespace Hanafalah\ModuleMedicalTreatment\Schemas;
 
-use Illuminate\Database\Eloquent\Builder;
 use Hanafalah\ModuleMedicalTreatment\Contracts;
 use Illuminate\Database\Eloquent\Model;
 use Hanafalah\LaravelSupport\Supports\PackageManagement;
+use Hanafalah\ModuleMedicalTreatment\Contracts\Data\MedicalServiceTreatmentData;
 
 class MedicalServiceTreatment extends PackageManagement implements Contracts\Schemas\MedicalServiceTreatment
 {
     protected string $__entity = 'MedicalServiceTreatment';
     public static $medical_service_treatment_model;
 
-    public function prepareStoreMedicalServiceTreatment(?array $attributes = null): Model
-    {
-        $attributes ??= request()->all();
-        if (isset($attributes['id'])) {
-            $guard = ['id' => $attributes['id']];
+    public function prepareStoreMedicalServiceTreatment(MedicalServiceTreatmentData $medical_service_treatment_dto): Model{        
+        if (isset($medical_service_treatment_dto->id)) {
+            $guard = ['id' => $medical_service_treatment_dto->id];
         } else {
-            if (!isset($attributes['medic_service_id']) || !isset($attributes['medical_treatment_id'])) throw new \Exception('medic_service_id and medical_treatment_id is required');
             $guard = [
-                'medic_service_id' => $attributes['medic_service_id'],
-                'medical_treatment_id' => $attributes['medical_treatment_id']
+                'service_id'           => $medical_service_treatment_dto->service_id,
+                'medical_treatment_id' => $medical_service_treatment_dto->medical_treatment_id
             ];
         }
         $model = $this->MedicalServiceTreatmentModel()->updateOrCreate($guard);
-        $model->name = $attributes['name'] ?? null;
+        $model->name = $medical_service_treatment_dto->name ?? null;
+        $this->fillingProps($model, $medical_service_treatment_dto->props);
         $model->save();
         return static::$medical_service_treatment_model = $model;
     }

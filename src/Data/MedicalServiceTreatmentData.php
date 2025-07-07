@@ -34,7 +34,6 @@ class MedicalServiceTreatmentData extends Data implements DataMedicalServiceTrea
         if (isset($service)) $service = $service->findOrFail($data->service_id);
         $props['prop_service'] = $service->toViewApi()->resolve();
         $props['prop_service_reference'] = $service->reference->toViewApi()->resolve();
-
         return $data;
     }
 }

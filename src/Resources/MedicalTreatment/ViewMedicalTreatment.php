@@ -15,19 +15,8 @@ class ViewMedicalTreatment extends ApiResource
       'treatment'         => $this->prop_treatment,
       'service_label_id'  => $this->service_label_id,
       'service_label'     => $this->prop_service_label,
-      'tariff_components' => $this->relationValidation('priceComponents', function () {
-        $priceComponents = $this->priceComponents;
-        return $priceComponents->transform(function ($priceComponent) {
-          return  [
-            "id"    => $priceComponent->tariff_component_id,
-            "price" => $priceComponent->price ?? $this->treatment->price ?? 0,
-            "name"  => $priceComponent->tariffComponent->name ?? "Name is invalid",
-          ];
-        });
-      }),
-      'medic_services' => $this->prop_medic_services ?? [],
-      'created_at'     => $this->created_at,
-      'updated_at'     => $this->updated_at
+      'created_at'        => $this->created_at,
+      'updated_at'        => $this->updated_at
     ];
     return $arr;
   }

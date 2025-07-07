@@ -4,7 +4,7 @@ namespace Hanafalah\ModuleMedicalTreatment\Models\MedicalTreatment;
 
 use Hanafalah\ModuleService\Concerns\HasServiceItem;
 use Hanafalah\ModuleMedicalTreatment\Enums\MedicalTreatment\Status;
-use Hanafalah\ModuleMedicalTreatment\Resources\MedicalTreatment\ViewMedicalTreatment;
+use Hanafalah\ModuleMedicalTreatment\Resources\MedicalTreatment\{ViewMedicalTreatment, ShowMedicalTreatment};
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Hanafalah\LaravelSupport\Models\BaseModel;
 use Hanafalah\LaravelHasProps\Concerns\HasProps;
@@ -50,7 +50,7 @@ class MedicalTreatment extends BaseModel
 
 
     public function getViewResource(){return ViewMedicalTreatment::class;}
-    public function getShowResource(){return ViewMedicalTreatment::class;}
+    public function getShowResource(){return ShowMedicalTreatment::class;}
 
     public function viewUsingRelation():array{
         return [];
@@ -58,7 +58,8 @@ class MedicalTreatment extends BaseModel
 
     public function showUsingRelation():array{
         return [
-            'priceComponents.tariffComponent'
+            'medicalServiceTreatments',
+            'treatment.servicePrices'
         ];
     }
 
@@ -74,7 +75,5 @@ class MedicalTreatment extends BaseModel
     public function serviceLabel(){return $this->belongsToModel('ServiceLabel');}
     public function medicalServiceTreatment(){return $this->hasOneModel('MedicalServiceTreatment');}
     public function medicalServiceTreatments(){return $this->hasManyModel('MedicalServiceTreatment');}
-    public function priceComponent(){return $this->morphOneModel("PriceComponent", "model");}
-    public function priceComponents(){return $this->morphManyModel("PriceComponent", "model");}
     //ENDEIGER SECTION
 }

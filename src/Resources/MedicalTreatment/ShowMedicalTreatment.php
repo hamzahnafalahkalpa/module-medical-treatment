@@ -2,8 +2,6 @@
 
 namespace Hanafalah\ModuleMedicalTreatment\Resources\MedicalTreatment;
 
-use Hanafalah\LaravelSupport\Resources\ApiResource;
-
 class ShowMedicalTreatment extends ViewMedicalTreatment
 {
   /**
@@ -15,6 +13,14 @@ class ShowMedicalTreatment extends ViewMedicalTreatment
   public function toArray($request): array
   {
     $arr = [
+      'treatment'         => $this->relationValidation('treatment',function(){
+        return $this->treatment->toShowApi()->resolve();
+      }),
+      'medical_service_treatments' => $this->relationValidation('medicalServiceTreatments',function(){
+        return $this->medicalServiceTreatments->transform(function($medicalServiceTreatment){
+          return $medicalServiceTreatment->toShowApi()->resolve();
+        });
+      }),
       'service_label'     => $this->relationValidation('serviceLabel',function(){
         return $this->serviceLabel->toShowApi()->resolve();
       }, $this->prop_service_label),
