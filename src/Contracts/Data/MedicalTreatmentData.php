@@ -2,6 +2,6 @@
 
 namespace Hanafalah\ModuleMedicalTreatment\Contracts\Data;
 
-use Spatie\LaravelData\Contracts\BaseData;
+use Hanafalah\ModuleExamination\Contracts\Data\ExaminationStuffData;
 
-interface MedicalTreatmentData extends BaseData{}
+interface MedicalTreatmentData extends ExaminationStuffData{}

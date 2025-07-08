@@ -2,8 +2,7 @@
 
 namespace Hanafalah\ModuleMedicalTreatment\Contracts\Schemas;
 
-use Hanafalah\LaravelSupport\Contracts\Supports\DataManagement;
-use Illuminate\Database\Eloquent\Builder;
+use Hanafalah\ModuleExamination\Contracts\Schemas\ExaminationStuff;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -23,4 +22,4 @@ use Illuminate\Pagination\LengthAwarePaginator;
  * @method array viewMedicalTreatmentPaginate(?PaginateData $paginate_dto = null)
  * @method array storeMedicalTreatment(?MedicalTreatmentData $funding_dto = null)
  */
-interface MedicalTreatment extends DataManagement{}
+interface MedicalTreatment extends ExaminationStuff{}

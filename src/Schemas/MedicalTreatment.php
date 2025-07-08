@@ -4,10 +4,11 @@ namespace Hanafalah\ModuleMedicalTreatment\Schemas;
 
 use Hanafalah\ModuleMedicalTreatment\Contracts;
 use Illuminate\Database\Eloquent\Model;
-use Hanafalah\LaravelSupport\Supports\PackageManagement;
+use Hanafalah\ModuleExamination\Schemas\ExaminationStuff;
 use Hanafalah\ModuleMedicalTreatment\Contracts\Data\MedicalTreatmentData;
+use Illuminate\Database\Eloquent\Builder;
 
-class MedicalTreatment extends PackageManagement implements Contracts\Schemas\MedicalTreatment
+class MedicalTreatment extends ExaminationStuff implements Contracts\Schemas\MedicalTreatment
 {
     protected string $__entity = 'MedicalTreatment';
     public static $medical_treatment_model;
@@ -21,9 +22,7 @@ class MedicalTreatment extends PackageManagement implements Contracts\Schemas\Me
     ];
     
     public function prepareStoreMedicalTreatment(MedicalTreatmentData $medical_treatment_dto): Model{
-        $model = $this->usingEntity()->updateOrCreate(['id' => $medical_treatment_dto->id ?? null], [
-            'name' => $medical_treatment_dto->name
-        ]);
+        $model = parent::prepareStoreExaminationStuff($medical_treatment_dto);
 
         if (isset($medical_treatment_dto->medical_service_treatments) && count($medical_treatment_dto->medical_service_treatments) > 0) {
             $keep_service_treatment_ids = [];
@@ -43,7 +42,7 @@ class MedicalTreatment extends PackageManagement implements Contracts\Schemas\Me
 
         $model->load('treatment');
         $treatment_dto                 = &$medical_treatment_dto->treatment;
-        $treatment_dto->id             = $model->treatment->getKey();
+        $treatment_dto->id             = $model->treatment?->getKey() ?? null;
         $treatment_dto->reference_type = $model->getMorphClass();
         $treatment_dto->reference_id   = $model->getKey();
         $treatment = $this->schemaContract('treatment')->prepareStoreTreatment($treatment_dto);
@@ -53,5 +52,9 @@ class MedicalTreatment extends PackageManagement implements Contracts\Schemas\Me
         $model->save();
 
         return static::$medical_treatment_model = $model;
+    }
+
+    public function medicalTreatment(mixed $conditionals = null): Builder{
+        return $this->examinationStuff($conditionals);
     }
 }

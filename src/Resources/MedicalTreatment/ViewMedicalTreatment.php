@@ -2,9 +2,9 @@
 
 namespace Hanafalah\ModuleMedicalTreatment\Resources\MedicalTreatment;
 
-use Hanafalah\LaravelSupport\Resources\ApiResource;
+use Hanafalah\ModuleExamination\Resources\ExaminationStuff\ViewExaminationStuff;
 
-class ViewMedicalTreatment extends ApiResource
+class ViewMedicalTreatment extends ViewExaminationStuff
 {
   public function toArray(\Illuminate\Http\Request $request): array
   {
@@ -13,11 +13,8 @@ class ViewMedicalTreatment extends ApiResource
       'name'              => $this->name,
       'treatment_code'    => $this->treatment_code ?? $this->medical_treatment_code,
       'treatment'         => $this->prop_treatment,
-      'service_label_id'  => $this->service_label_id,
-      'service_label'     => $this->prop_service_label,
-      'created_at'        => $this->created_at,
-      'updated_at'        => $this->updated_at
     ];
+    $arr = $this->mergeArray(parent::toArray($request),$arr);
     return $arr;
   }
 }

@@ -2,6 +2,8 @@
 
 namespace Hanafalah\ModuleMedicalTreatment\Resources\MedicalTreatment;
 
+use Hanafalah\ModuleExamination\Resources\ExaminationStuff\ShowExaminationStuff;
+
 class ShowMedicalTreatment extends ViewMedicalTreatment
 {
   /**
@@ -21,11 +23,9 @@ class ShowMedicalTreatment extends ViewMedicalTreatment
           return $medicalServiceTreatment->toShowApi()->resolve();
         });
       }),
-      'service_label'     => $this->relationValidation('serviceLabel',function(){
-        return $this->serviceLabel->toShowApi()->resolve();
-      }, $this->prop_service_label),
     ];
-    $arr = $this->mergeArray(parent::toArray($request),$arr);
+    $show = $this->resolveNow(new ShowExaminationStuff($this));
+    $arr = $this->mergeArray(parent::toArray($request),$show,$arr);
     return $arr;
   }
 }
