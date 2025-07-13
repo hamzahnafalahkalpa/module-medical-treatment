@@ -5,16 +5,22 @@ use Hanafalah\ModuleMedicalTreatment\{
     Contracts,
     Commands as ModuleMedicalTreatmentCommands
 };
-use Hanafalah\ModuleMedicService\Models\MedicService;
 
 return [
+    'namespace' => 'Hanafalah\\ModuleMedicalTreatment',
     'app' => [
         'contracts' => [
             //ADD YOUR CONTRACTS HERE
-            'medical_treatment'          => Contracts\MedicalTreatment::class,
-            'medical_service_treatment'  => Contracts\MedicalServiceTreatment::class,
-            'module_medical_treatment'   => Contracts\ModuleMedicalTreatment::class
-        ],
+        ]
+    ],
+    'libs' => [
+        'model' => 'Models',
+        'contract' => 'Contracts',
+        'schema' => 'Schemas',
+        'database' => 'Database',
+        'data' => 'Data',
+        'resource' => 'Resources',
+        'migration' => '../assets/database/migrations'
     ],
     'commands' => [
         ModuleMedicalTreatmentCommands\InstallMakeCommand::class
@@ -25,9 +31,6 @@ return [
     ],
     'database' => [
         'models' => [
-            'MedicalTreatment'           => Models\MedicalTreatment\MedicalTreatment::class,
-            'MedicalServiceTreatment'    => Models\MedicalTreatment\MedicalServiceTreatment::class,
-            'MedicService'               => MedicService::class,
         ]
     ]
 ];
