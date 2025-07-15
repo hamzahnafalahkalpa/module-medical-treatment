@@ -3,12 +3,12 @@
     "description": "Master Module Medical Treatment",
     "type": "library",
     "require": {
-        "hanafalah/laravel-support": "1.x-dev as 1.0",
-        "hanafalah/module-service": "1.x-dev as 1.0",
-        "hanafalah/module-medic-service": "1.x-dev as 1.0",
-        "hanafalah/module-treatment": "1.x-dev as 1.0",
-        "hanafalah/module-transaction": "1.x-dev as 1.0",
-        "hanafalah/module-examination": "1.x-dev as 1.0"
+        "hanafalah/laravel-support": "dev-main",
+        "hanafalah/module-service": "dev-main",
+        "hanafalah/module-medic-service": "dev-main",
+        "hanafalah/module-treatment": "dev-main",
+        "hanafalah/module-transaction": "dev-main",
+        "hanafalah/module-examination": "dev-main"
     },
     "autoload": {
         "psr-4": {
