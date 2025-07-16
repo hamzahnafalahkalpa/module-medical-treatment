@@ -29,8 +29,9 @@ class MedicalServiceTreatment extends PackageManagement implements Contracts\Sch
                 'medical_treatment_id' => $medical_service_treatment_dto->medical_treatment_id
             ];
         }
-        $model = $this->MedicalServiceTreatmentModel()->updateOrCreate($guard);
+        $model = $this->usingEntity()->updateOrCreate($guard);
         $model->name = $medical_service_treatment_dto->name ?? null;
+
         $this->fillingProps($model, $medical_service_treatment_dto->props);
         $model->save();
         return static::$medical_service_treatment_model = $model;
