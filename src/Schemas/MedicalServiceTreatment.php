@@ -10,7 +10,7 @@ use Hanafalah\ModuleMedicalTreatment\Contracts\Data\MedicalServiceTreatmentData;
 class MedicalServiceTreatment extends PackageManagement implements Contracts\Schemas\MedicalServiceTreatment
 {
     protected string $__entity = 'MedicalServiceTreatment';
-    public static $medical_service_treatment_model;
+    public $medical_service_treatment_model;
 
     protected array $__cache = [
         'index' => [
@@ -34,6 +34,6 @@ class MedicalServiceTreatment extends PackageManagement implements Contracts\Sch
 
         $this->fillingProps($model, $medical_service_treatment_dto->props);
         $model->save();
-        return static::$medical_service_treatment_model = $model;
+        return $this->medical_service_treatment_model = $model;
     }
 }

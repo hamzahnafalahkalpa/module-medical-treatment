@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 class MedicalTreatment extends ExaminationStuff implements Contracts\Schemas\MedicalTreatment
 {
     protected string $__entity = 'MedicalTreatment';
-    public static $medical_treatment_model;
+    public $medical_treatment_model;
 
     protected array $__cache = [
         'index' => [
@@ -51,7 +51,7 @@ class MedicalTreatment extends ExaminationStuff implements Contracts\Schemas\Med
         $this->fillingProps($model,$medical_treatment_dto->props);
         $model->save();
 
-        return static::$medical_treatment_model = $model;
+        return $this->medical_treatment_model = $model;
     }
 
     public function medicalTreatment(mixed $conditionals = null): Builder{
