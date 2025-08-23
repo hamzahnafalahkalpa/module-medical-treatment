@@ -51,7 +51,6 @@ class MedicalTreatment extends ExaminationStuff implements Contracts\Schemas\Med
         $medical_treatment_dto->props['prop_treatment'] = $treatment->toViewApi()->resolve();
         $this->fillingProps($model,$medical_treatment_dto->props);
         $model->save();
-
         return $this->medical_treatment_model = $model;
     }
 
