@@ -24,7 +24,6 @@ class MedicalTreatment extends ExaminationStuff implements Contracts\Schemas\Med
 
     public function prepareStoreMedicalTreatment(MedicalTreatmentData $medical_treatment_dto): Model{
         $model = $this->prepareStoreExaminationStuff($medical_treatment_dto);
-
         if (isset($medical_treatment_dto->medical_service_treatments) && count($medical_treatment_dto->medical_service_treatments) > 0) {
             $keep_service_treatment_ids = [];
             $medic_service_schema = $this->schemaContract('medical_service_treatment');
